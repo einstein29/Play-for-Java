@@ -1,0 +1,25 @@
+@(productForm: Form[Product])
+@import helper._
+@main("Product form") {
+	<h1>Product form</h1>
+	@helper.form(action = routes.Products.save(), 'enctype -> "multipart/form-data") {
+	<fieldset>
+		<legend>Product (@productForm("name").valueOr("New"))</legend>
+		@helper.inputText(productForm("ean"), '_label -> "EAN")
+		@helper.inputText(productForm("name"),'_label -> "Name")
+		@helper.textarea(productForm("description"), '_label -> "Description")
+	    @helper.inputFile(productForm("picture"), '_label -> "Upload picture here")
+        @if(!productForm("picture").valueOr("").isEmpty()) {
+        <div class="control-group">
+           <div class="controls">
+             <img 
+              style="position:relative; left:50px;height:80px" 
+              src="/picture/@productForm("ean").value">           
+          </div>
+        </div>
+        }
+	</fieldset>
+	<input type="submit" class="btn btn-primary" value="Save">
+	<a class="btn" href="@routes.Products.list()">Cancel</a>
+	}
+}
