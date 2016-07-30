@@ -1,0 +1,73 @@
+@* This scala method specifies the type of variable that it accepts. 
+ * Variable name: currentPage, Variable type: com.avaje.ebean.PagedList[Product]
+ * Because PagedList is from a 3rd party API, therefore you need to declare the full path.
+ *@
+@(currentPage: com.avaje.ebean.PagedList[Product])
+
+@* This is to call main.scala.html, passing 2 parameters @(title: String)(content: Html)
+ * title= "Product-catalog", and content = "everything within {...}" 
+ *@
+@main("Product-catalog"){
+		
+		
+		<h2>All products</h2>
+		<script>
+			function del(urlToDelete) {
+				$.ajax({
+					url : urlToDelete,
+					type : 'DELETE',
+					success : function(results) {
+						// Refresh the page
+						location.reload();
+					}
+				});
+			}
+		</script>
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>EAN</th>
+					<th>Name</th>
+					<th>Description</th>
+					<th>Date</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				@for(product <- currentPage.getList()) {
+				<tr>
+					<td><a href="@routes.Products.details(product)"> @product.ean </a></td>
+					<td><a href="@routes.Products.details(product)"> @product.name</a></td>
+					<td><a href="@routes.Products.details(product)"> @product.description</a></td>
+					<td> @product.date</td>
+					<td>
+						<a href="@routes.Products.details(product)"> <span class="glyphicon glyphicon-pencil"></span></a>
+						<a onclick="del('@routes.Products.delete(product.ean)')"> <span class="glyphicon glyphicon-trash"></span></a>
+					</td>
+				</tr>
+				}
+			</tbody>
+		</table>
+		
+		
+		<div id="pagination">
+			<ul class="pagination">
+				@if(currentPage.hasPrev) {
+					<li class="prev"><a href="@routes.Products.list(currentPage.getPageIndex-1)"> Prev </a></li>
+				} else {
+					<li class="prev disabled"><a>Prev</a></li>
+				}
+				<li class="current"><a>@currentPage.getDisplayXtoYofZ(" - ","/ ")</a></li>
+				
+				@if(currentPage.hasNext) {
+					<li class="next"><a href="@routes.Products.list(currentPage.getPageIndex+1)"> Next </a></li> 
+				} else {
+					<li class="next disabled"><a>Next</a></li> 
+				}
+			</ul>
+		</div>
+		
+
+		<a href="@routes.Products.newProduct()" class="btn btn-primary"> <span class="glyphicon glyphicon-plus"></span> New product</a>	
+	
+}
